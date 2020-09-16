@@ -1,0 +1,11 @@
+
+.entry-card {
+  border: 1px solid #aaa;
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 0.25rem;
+}
+
+.mt-3 {
+  margin-top: 1rem !important;
+}
