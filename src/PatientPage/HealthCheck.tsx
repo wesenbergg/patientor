@@ -1,11 +1,16 @@
 import React from 'react';
 import { Icon } from 'semantic-ui-react';
+import { useStateValue } from '../state';
 import { HealthCheckEntry } from '../types';
 
 const HealthCheck = (props: { entry: HealthCheckEntry }) => {
   const entry = props.entry;
+  const [{ diagnosis },] = useStateValue();
 
   const showHealthIcon = () => {
+    console.log(entry);
+    console.log(entry.healthCheckRating);
+    
     switch (entry.healthCheckRating) {
       case 0:
         return <>
@@ -37,12 +42,22 @@ const HealthCheck = (props: { entry: HealthCheckEntry }) => {
         break;
     }
   };
-  
+
+  const showDiagnosisName = (code: string): string => {
+    const foundDiagnosis = diagnosis.find(d => d.code === code );
+    return foundDiagnosis ? foundDiagnosis.name: '';
+  };
+
   return(
     <div key={entry.id} className="entry-card">
       <h3><b>{entry.date} <Icon size="big" name="doctor" /></b></h3>
       <p>{entry.description}</p>
       {showHealthIcon()}
+      {entry.diagnosisCodes ? entry.diagnosisCodes.map(e =>
+            <li key={e}>
+              {e} - {showDiagnosisName(e)}
+            </li>
+          ): <></>}
     </div>
   );
 };

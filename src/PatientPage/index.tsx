@@ -1,11 +1,15 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Button, Icon } from 'semantic-ui-react';
-import AddPatientModal from '../AddPatientModal';
-import { useStateValue, setPatient } from '../state';
+import AddEntryModal from '../AddEntryModal';
+import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
+import { apiBaseUrl } from '../constants';
+import { useStateValue, setPatient, addEntry } from '../state';
+import { Entry } from '../types';
 import HealthCheck from './HealthCheck';
 import HospitalEntryCard from './HospitalEntry';
 import OccupationalEntry from './OccupationalEntry';
+import axios from 'axios';
 
 const assertNever = (value: never): never => {
   throw new Error(
@@ -57,6 +61,20 @@ const PatientPage = () => {
         return assertNever(e);
     }
   });
+
+  const submitNewEntry = async (values: EntryFormValues) => {
+    try {
+      
+      const { data: newEntry } = await axios.post<Entry>(
+        `${apiBaseUrl}/patients/${id}/entries`,
+        values
+      );
+      dispatch(addEntry(newEntry, id));      
+      setModalOpen(false);
+    } catch (e) {
+      console.error(e.response.data);
+    }
+  };
   
   return(
     <div>
@@ -65,9 +83,9 @@ const PatientPage = () => {
       <p>occupation: {patient.occupation}</p>
       <h3>entries</h3>
       {showEntries()}
-      <AddPatientModal
+      <AddEntryModal
         modalOpen={modalOpen}
-        onSubmit={() => console.log('add')}
+        onSubmit={submitNewEntry}
         error={undefined}
         onClose={() => setModalOpen(false)}
       />
